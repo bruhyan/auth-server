@@ -15,22 +15,41 @@ import { createHmac } from "crypto";
  * @param {Number} [options.digits=6]
  * @returns {String} token
  */
-
+// Specified by RFC4226 by the Internet Engineering Task Force (IETF)
 export const hotp = (key, counter, options) => {
     const algorithm = options && options.algorithm || 'sha1';
     const numDigits = options && options.digits || 6;
 
-    const hmacHash = createHmac(algorithm, key).update(counter).digest();
+    const processedCounter = processCounter(counter)
+    const hmacHash = createHmac(algorithm, key).update(processedCounter).digest();
 
     const truncatedHmac = truncate(hmacHash, numDigits);
     return zeropad(truncatedHmac, numDigits);
 }
 
-const getCounter = (value) => {
-
+/**
+ * Make sure the counter is of desired type and length
+ */
+const processCounter = (counter) => {
+    let buffer = Buffer.alloc(8);
+    if (Number.isFinite(counter) || typeof counter === 'bigint') {
+        buffer.write(zeropad(value.toString(16)), 0, "hex");
+    } else if (Buffer.isBuffer(counter)) {
+        counter.copy(buffer)
+    } else if (typeof counter === "string") {
+        buffer.write(zeropad(counter), 0, "hex");
+    } else {
+        throw new Error(`Unexepected counter value of type ${typeof value}`)
+    }
+    return buffer
 }
 
-// Specified by RFC
+/**
+ * Specified by RFC4226 by the Internet Engineering Task Force (IETF)
+ * The purpose of dynamic offset truncation technique is to extract a 4-byte dynamic
+ * binary code from a 160-bit (20-byte) HMAC-SHA-1 result.
+ * More information at RFC4226
+ **/
 const truncate = (hmac, digits) => {
     let offset = hmac[hmac.length - 1] & 0x0F;
     const value = (hmac[offset + 0] & 0x7F) << 24 |
