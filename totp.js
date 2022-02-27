@@ -34,8 +34,6 @@ export const totp = (key, options) => {
 
     const timeCounter = getTimeCounter(time, t0, timeStep);
 
-    console.log('timeC ', timeCounter)
-
     return hotp(key, timeCounter, { algorithm, digits });
 }
 

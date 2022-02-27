@@ -31,4 +31,4 @@ sequelize.sync().then(() => {
     console.log('DB and tables have been created');
 });
 
-module.exports = { OTP };
+export default OTP;

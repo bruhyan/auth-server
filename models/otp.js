@@ -30,7 +30,7 @@
 //     })
 // }
 
-module.exports = function (sequelize, DataTypes) {
+export default function OTP(sequelize, DataTypes) {
 
     return sequelize.define('OTP', {
         id: {

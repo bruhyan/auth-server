@@ -1,10 +1,9 @@
 import { hotp } from './hotp.js';
 import { totp } from './totp.js';
+import { v4 as uuidv4 } from 'uuid';
+import sendOtpToEmail from './routes/sendOTP_to_email.js';
 
-// console.log('hash for auth')
-
-// console.log(hotp('message', 'counter1', { algorithm: 'sha1', digits: 6 }));
-// console.log(totp('message', { algorithm: 'sha1', digits: 6, timeStep: 30 }));
+console.log(totp(uuidv4(), { algorithm: 'sha1', digits: 6, timeStep: 30 }));
 
 import 'dotenv/config';
 import express from 'express';
@@ -29,6 +28,8 @@ const corsOption = {
 app.use(cors(corsOption));
 
 app.use(logger('common'));
+
+app.use('/api/v1/', sendOtpToEmail);
 
 app.get('/', (req, res) => {
     res.send("server is live");
