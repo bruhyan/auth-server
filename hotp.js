@@ -13,7 +13,7 @@ import { createHmac } from "crypto";
  * @param {Object} [options]
  * @param {String}  [options.algorithm='sha1']
  * @param {Number} [options.digits=6]
- * @returns {String} token
+ * @returns {String}
  */
 // Specified by RFC4226 by the Internet Engineering Task Force (IETF)
 export const hotp = (key, counter, options) => {
@@ -33,13 +33,13 @@ export const hotp = (key, counter, options) => {
 const processCounter = (counter) => {
     let buffer = Buffer.alloc(8);
     if (Number.isFinite(counter) || typeof counter === 'bigint') {
-        buffer.write(zeropad(value.toString(16)), 0, "hex");
+        buffer.write(zeropad(counter.toString(16)), 0, "hex");
     } else if (Buffer.isBuffer(counter)) {
         counter.copy(buffer)
     } else if (typeof counter === "string") {
         buffer.write(zeropad(counter), 0, "hex");
     } else {
-        throw new Error(`Unexepected counter value of type ${typeof value}`)
+        throw new Error(`Unexepected counter value of type ${typeof counter}`)
     }
     return buffer
 }
